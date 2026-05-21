@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The AI Builder Method — Build With AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --lime: #C8FF00;
+  --blue: #00D4FF;
+  --purple: #8B00FF;
+  --dark: #060606;
+  --dark2: #0E0E0E;
+  --dark3: #161616;
+  --white: #F2F2F0;
+  --muted: rgba(242,242,240,0.5);
+  --border: rgba(255,255,255,0.06);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--dark);
+  color: var(--white);
+  font-family: 'Outfit', sans-serif;
+  overflow-x: hidden;
+  line-height: 1.7;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 0%, rgba(200,255,0,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 100% 60%, rgba(0,212,255,0.04) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.grid-bg {
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(200,255,0,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,255,0,0.02) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.top-bar {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--lime), var(--blue), var(--lime), transparent);
+  z-index: 100;
+}
+
+/* NAV */
+nav {
+  position: fixed; top: 3px; left: 0; right: 0;
+  background: rgba(6,6,6,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 99;
+}
+
+.nav-brand {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: 0.2em;
+  color: var(--white);
+}
+
+.nav-brand span { color: var(--lime); }
+
+.nav-tag {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+/* HERO */
+.hero {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 24px 80px;
+}
+
+.free-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(200,255,0,0.08);
+  border: 1px solid rgba(200,255,0,0.25);
+  color: var(--lime);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 7px 18px;
+  border-radius: 2px;
+  margin-bottom: 32px;
+}
+
+.free-badge .dot {
+  width: 5px; height: 5px;
+  background: var(--lime);
+  border-radius: 50%;
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+.hero-by {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(54px, 11vw, 110px);
+  line-height: 0.92;
+  letter-spacing: 0.02em;
+  margin-bottom: 24px;
+}
+
+.hero h1 .lime { color: var(--lime); }
+.hero h1 .blue { color: var(--blue); }
+
+.hero-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(16px, 2.5vw, 22px);
+  font-style: italic;
+  color: var(--muted);
+  max-width: 580px;
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+
+.hero-intro {
+  max-width: 640px;
+  font-size: 16px;
+  color: rgba(242,242,240,0.7);
+  font-weight: 300;
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+.hero-intro strong { color: var(--lime); font-weight: 700; }
+
+/* FRAMEWORK OVERVIEW */
+.framework {
+  position: relative; z-index: 1;
+  background: var(--dark2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 80px 24px;
+  text-align: center;
+}
+
+.section-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--lime);
+  margin-bottom: 14px;
+}
+
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(36px, 6vw, 58px);
+  line-height: 1;
+  letter-spacing: 0.03em;
+  margin-bottom: 48px;
+}
+
+.framework-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  max-width: 700px;
+  margin: 0 auto 48px;
+}
+
+.pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--dark3);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 12px 24px;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.pill:hover { border-color: rgba(200,255,0,0.3); transform: translateY(-2px); }
+
+.pill-letter {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  color: var(--lime);
+  letter-spacing: 0.05em;
+  width: 24px;
+}
+
+.pill-word {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--white);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* PRINCIPLES */
+.principles {
+  position: relative; z-index: 1;
+  padding: 80px 24px;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.principle-card {
+  background: var(--dark2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 48px 40px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+
+.principle-card:hover { border-color: rgba(200,255,0,0.2); }
+
+.principle-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--lime), transparent);
+}
+
+.principle-number {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 80px;
+  color: rgba(200,255,0,0.06);
+  position: absolute;
+  top: 16px; right: 24px;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.principle-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.principle-letter {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 48px;
+  color: var(--lime);
+  line-height: 1;
+}
+
+.principle-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
+  color: var(--white);
+  letter-spacing: 0.05em;
+}
+
+.principle-tagline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-style: italic;
+  color: var(--blue);
+  margin-bottom: 20px;
+}
+
+.principle-body {
+  font-size: 15px;
+  color: rgba(242,242,240,0.7);
+  font-weight: 300;
+  line-height: 1.8;
+  margin-bottom: 28px;
+  max-width: 640px;
+}
+
+.principle-body strong { color: var(--white); font-weight: 600; }
+
+/* Formula Box */
+.formula-box {
+  background: rgba(200,255,0,0.04);
+  border: 1px solid rgba(200,255,0,0.15);
+  border-radius: 4px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+
+.formula-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--lime);
+  margin-bottom: 10px;
+}
+
+.formula-text {
+  font-family: 'Outfit', monospace;
+  font-size: 13px;
+  color: rgba(242,242,240,0.8);
+  line-height: 1.7;
+  font-weight: 400;
+}
+
+/* Example Box */
+.example-box {
+  background: rgba(0,212,255,0.04);
+  border: 1px solid rgba(0,212,255,0.15);
+  border-radius: 4px;
+  padding: 20px 24px;
+}
+
+.example-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 10px;
+}
+
+.example-text {
+  font-size: 14px;
+  color: rgba(242,242,240,0.8);
+  line-height: 1.7;
+  font-style: italic;
+  font-weight: 300;
+}
+
+/* MISTAKES */
+.mistakes {
+  position: relative; z-index: 1;
+  background: var(--dark2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 80px 24px;
+}
+
+.mistakes-inner { max-width: 860px; margin: 0 auto; }
+
+.mistake-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 0;
+}
+
+.mistake-item {
+  background: var(--dark3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 24px 28px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.mistake-icon {
+  font-size: 20px;
+  padding-top: 2px;
+}
+
+.mistake-wrong {
+  font-size: 14px;
+  font-weight: 600;
+  color: #FF5050;
+  margin-bottom: 6px;
+}
+
+.mistake-fix {
+  font-size: 13px;
+  color: rgba(242,242,240,0.6);
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+.mistake-fix strong { color: var(--lime); font-weight: 600; }
+
+/* CHEAT SHEET */
+.cheat-sheet {
+  position: relative; z-index: 1;
+  padding: 80px 24px;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.table-wrap { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th {
+  background: var(--dark3);
+  padding: 14px 18px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--lime);
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  color: rgba(242,242,240,0.75);
+  vertical-align: top;
+  line-height: 1.6;
+}
+
+tr:hover td { background: rgba(200,255,0,0.02); }
+
+td:first-child { font-weight: 600; color: var(--white); }
+td code {
+  background: rgba(200,255,0,0.08);
+  color: var(--lime);
+  padding: 2px 8px;
+  border-radius: 2px;
+  font-size: 12px;
+  font-family: monospace;
+}
+
+/* CONTEXT BLOCK */
+.context-section {
+  position: relative; z-index: 1;
+  background: var(--dark2);
+  border-top: 1px solid var(--border);
+  padding: 80px 24px;
+}
+
+.context-inner { max-width: 860px; margin: 0 auto; }
+
+.context-box {
+  background: var(--dark3);
+  border: 1px solid rgba(200,255,0,0.15);
+  border-radius: 4px;
+  padding: 40px;
+  position: relative;
+}
+
+.context-box::before {
+  content: 'COPY THIS TEMPLATE';
+  position: absolute;
+  top: -1px; right: 20px;
+  background: var(--lime);
+  color: #000;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  padding: 4px 12px;
+  border-radius: 0 0 4px 4px;
+}
+
+.context-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 24px;
+  color: var(--lime);
+  letter-spacing: 0.05em;
+  margin-bottom: 20px;
+}
+
+.context-content {
+  font-family: monospace;
+  font-size: 13px;
+  color: rgba(242,242,240,0.8);
+  line-height: 2;
+  white-space: pre-wrap;
+}
+
+.context-content .placeholder {
+  color: var(--blue);
+  font-style: italic;
+}
+
+/* FOOTER CTA */
+.footer-cta {
+  position: relative; z-index: 1;
+  text-align: center;
+  padding: 80px 24px 100px;
+}
+
+.footer-cta h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(44px, 8vw, 80px);
+  line-height: 0.95;
+  margin-bottom: 16px;
+}
+
+.footer-cta p {
+  color: var(--muted);
+  font-size: 16px;
+  font-weight: 300;
+  margin-bottom: 40px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.7;
+}
+
+.cta-btn {
+  display: inline-block;
+  background: var(--lime);
+  color: #000;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 18px 48px;
+  border-radius: 2px;
+  text-decoration: none;
+  transition: all 0.25s;
+  box-shadow: 0 0 50px rgba(200,255,0,0.2);
+  margin-right: 12px;
+  margin-bottom: 12px;
+  display: inline-block;
+}
+
+.cta-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 70px rgba(200,255,0,0.35);
+}
+
+.cta-btn-secondary {
+  display: inline-block;
+  background: transparent;
+  color: var(--white);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 18px 48px;
+  border-radius: 2px;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  transition: all 0.25s;
+  margin-bottom: 12px;
+  display: inline-block;
+}
+
+.cta-btn-secondary:hover { border-color: rgba(200,255,0,0.3); color: var(--lime); }
+
+/* FOOTER */
+footer {
+  position: relative; z-index: 1;
+  border-top: 1px solid var(--border);
+  padding: 28px 40px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.footer-brand {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 0.1em;
+}
+
+.footer-brand span { color: var(--lime); }
+
+.footer-copy {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 600px) {
+  nav { padding: 14px 20px; }
+  .principle-card { padding: 32px 24px; }
+  .context-box { padding: 28px 20px; }
+  footer { justify-content: center; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="top-bar"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">Build With <span>AI</span></div>
+  <div class="nav-tag">Free Resource · @Nomhle_AI</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="free-badge"><div class="dot"></div> Free Resource</div>
+  <div class="hero-by">By Nomhle Mbele · Build With AI</div>
+  <h1>The <span class="lime">AI</span><br>Builder<br><span class="blue">Method</span></h1>
+  <p class="hero-sub">A practical prompting system for South African service business owners who want real results — not AI experiments.</p>
+
+  <p class="hero-intro">
+    Most people get bad results from AI because they <strong>talk to it like a search engine.</strong> They type something vague, get something generic, and walk away thinking AI is overhyped.
+    <br><br>
+    It is not overhyped. You just need to know how to <strong>build with it</strong> — giving it clear direction, clear structure, and clear goals. That is what this guide teaches you to do.
+  </p>
+</section>
+
+<!-- FRAMEWORK -->
+<div class="framework">
+  <div class="section-label">The Framework</div>
+  <div class="section-title">The B·U·I·L·D Method</div>
+  <div class="framework-pills">
+    <div class="pill"><div class="pill-letter">B</div><div class="pill-word">Brief</div></div>
+    <div class="pill"><div class="pill-letter">U</div><div class="pill-word">Unpack</div></div>
+    <div class="pill"><div class="pill-letter">I</div><div class="pill-word">Instruct</div></div>
+    <div class="pill"><div class="pill-letter">L</div><div class="pill-word">Limit</div></div>
+    <div class="pill"><div class="pill-letter">D</div><div class="pill-word">Demonstrate</div></div>
+  </div>
+  <p style="color:var(--muted);font-size:15px;font-weight:300;max-width:500px;margin:0 auto;line-height:1.7;">Five principles. Every prompt. Every time. Whether you are writing a caption, building a system or planning your content — BUILD gives you the structure.</p>
+</div>
+
+<!-- PRINCIPLES -->
+<div class="principles">
+
+  <!-- B -->
+  <div class="principle-card">
+    <div class="principle-number">01</div>
+    <div class="principle-badge">
+      <div class="principle-letter">B</div>
+      <div class="principle-name">Brief — Give AI A Role First</div>
+    </div>
+    <div class="principle-tagline">Before you type anything — tell AI who it is.</div>
+    <p class="principle-body">
+      Research shows that assigning a specific role before your request improves output quality by up to <strong>40%.</strong> When AI knows who it is supposed to be — it thinks, writes and responds differently. Do not open a chat and start typing. Open with a brief. The more specific the role, the sharper the result.
+    </p>
+    <div class="formula-box">
+      <div class="formula-label">Formula</div>
+      <div class="formula-text">"You are a [specific expert] who specialises in [niche]. You have [experience]. Your job is to help me with [task]."</div>
+    </div>
+    <div class="example-box">
+      <div class="example-label">SA Service Business Example</div>
+      <div class="example-text">"You are a South African marketing strategist who specialises in helping small service businesses get clients using WhatsApp and TikTok on a zero budget. Your job is to help me write a caption that drives people to WhatsApp me."</div>
+    </div>
+  </div>
+
+  <!-- U -->
+  <div class="principle-card">
+    <div class="principle-number">02</div>
+    <div class="principle-badge">
+      <div class="principle-letter">U</div>
+      <div class="principle-name">Unpack — Define What You Actually Want</div>
+    </div>
+    <div class="principle-tagline">Tell AI what the result should look like — not just what to do.</div>
+    <p class="principle-body">
+      Most people tell AI what to do but never describe what the result should look like. Length. Format. Tone. Audience. These details are what separate a generic answer from something you can actually post, send or use. <strong>Unpack the output before you ask for it.</strong>
+    </p>
+    <div class="formula-box">
+      <div class="formula-label">Formula</div>
+      <div class="formula-text">"Write a [length] [format] in a [tone] tone for [audience]. It must include [key things] and avoid [what to leave out]."</div>
+    </div>
+    <div class="example-box">
+      <div class="example-label">SA Service Business Example</div>
+      <div class="example-text">"Write a 3 paragraph WhatsApp follow up message in a warm but professional tone for a potential client who asked about my cleaning service prices. Keep it under 150 words. No pushy sales language. End with a soft call to action."</div>
+    </div>
+  </div>
+
+  <!-- I -->
+  <div class="principle-card">
+    <div class="principle-number">03</div>
+    <div class="principle-badge">
+      <div class="principle-letter">I</div>
+      <div class="principle-name">Instruct — Break It Into Steps</div>
+    </div>
+    <div class="principle-tagline">Structure your instruction so AI can structure its thinking.</div>
+    <p class="principle-body">
+      For anything beyond a simple task — break your instruction into steps. This is called Chain-of-Thought prompting and it dramatically improves accuracy. When you <strong>structure your instruction, AI structures its thinking.</strong> This is especially powerful for content planning, business strategy and building systems.
+    </p>
+    <div class="formula-box">
+      <div class="formula-label">Formula</div>
+      <div class="formula-text">Step 1: [First thing AI should do]
+Step 2: [Second thing]
+Step 3: [Third thing]
+Only move to the next step when the previous one is complete.</div>
+    </div>
+    <div class="example-box">
+      <div class="example-label">SA Service Business Example</div>
+      <div class="example-text">"Help me create a 30 day content plan for my salon business. Step 1: Ask me 3 questions about my business and clients. Step 2: Based on my answers suggest 5 content themes. Step 3: For each theme write 6 post ideas. Do not move to the next step until I confirm."</div>
+    </div>
+  </div>
+
+  <!-- L -->
+  <div class="principle-card">
+    <div class="principle-number">04</div>
+    <div class="principle-badge">
+      <div class="principle-letter">L</div>
+      <div class="principle-name">Limit — Cut The Fluff Before It Starts</div>
+    </div>
+    <div class="principle-tagline">Tell AI what NOT to do — it is one of the most powerful things you can do.</div>
+    <p class="principle-body">
+      AI has a habit of padding responses with filler phrases, generic advice and unnecessary disclaimers. <strong>Telling AI what NOT to include</strong> is one of the most underused and highest impact techniques available. The more you restrict — the more focused and usable the output becomes. Think of it as editing before you even start.
+    </p>
+    <div class="formula-box">
+      <div class="formula-label">Formula</div>
+      <div class="formula-text">"Do NOT include: [list things to exclude].
+Do NOT start with 'Certainly!' or 'Great question!'
+Do NOT add disclaimers. Be direct and practical."</div>
+    </div>
+    <div class="example-box">
+      <div class="example-label">SA Service Business Example</div>
+      <div class="example-text">"Write me 5 TikTok captions for my home cleaning service. Do NOT use hashtags. Do NOT start with 'Are you looking for...'. Do NOT use corporate language. Keep each caption under 3 sentences. Sound like a real person talking to a friend — not a brand."</div>
+    </div>
+  </div>
+
+  <!-- D -->
+  <div class="principle-card">
+    <div class="principle-number">05</div>
+    <div class="principle-badge">
+      <div class="principle-letter">D</div>
+      <div class="principle-name">Demonstrate — Show AI What Good Looks Like</div>
+    </div>
+    <div class="principle-tagline">Give AI an example and watch everything change.</div>
+    <p class="principle-body">
+      This is called Few-Shot Prompting — giving AI one or more examples of the output you want before asking it to produce. Research confirms this is <strong>the single most effective way to get AI to match your voice, tone and format.</strong> If you have a caption, message or post you love — paste it in and say write like this.
+    </p>
+    <div class="formula-box">
+      <div class="formula-label">Formula</div>
+      <div class="formula-text">"Here is an example of writing I like: [paste example]
+
+Now write [new piece] in the same style, tone and length."</div>
+    </div>
+    <div class="example-box">
+      <div class="example-label">SA Service Business Example</div>
+      <div class="example-text">"Here is a TikTok caption I wrote that did well: 'We were taught to work hard. AI is teaching us to work smart.' Write me 5 more captions in this exact style for the topic of automating your client bookings."</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MISTAKES -->
+<div class="mistakes">
+  <div class="mistakes-inner">
+    <div class="section-label">What To Avoid</div>
+    <div class="section-title" style="margin-bottom:40px;">5 Mistakes That<br>Kill Your Prompts</div>
+    <div class="mistake-list">
+      <div class="mistake-item">
+        <div class="mistake-icon">✕</div>
+        <div>
+          <div class="mistake-wrong">Being vague — "Write me a caption"</div>
+          <div class="mistake-fix">No role. No audience. No format. No tone. You get a generic output because you gave a generic input. <strong>Fix: Use even 2 or 3 steps of the BUILD method.</strong></div>
+        </div>
+      </div>
+      <div class="mistake-item">
+        <div class="mistake-icon">✕</div>
+        <div>
+          <div class="mistake-wrong">Accepting the first output as final</div>
+          <div class="mistake-fix">AI's first answer is never its best. Ask it to go deeper, try a bolder angle or rewrite with more urgency. <strong>Fix: Always ask for 2-3 variations before you choose.</strong></div>
+        </div>
+      </div>
+      <div class="mistake-item">
+        <div class="mistake-icon">✕</div>
+        <div>
+          <div class="mistake-wrong">One giant wall of text with no structure</div>
+          <div class="mistake-fix">When you dump everything in without structure — AI picks and chooses what to respond to and often misses the most important parts. <strong>Fix: Use numbered steps and line breaks.</strong></div>
+        </div>
+      </div>
+      <div class="mistake-item">
+        <div class="mistake-icon">✕</div>
+        <div>
+          <div class="mistake-wrong">Starting a new chat every single time</div>
+          <div class="mistake-fix">AI has no memory between chats. You keep repeating context and getting inconsistent results. <strong>Fix: Create your personal Context Block and paste it at the start of every new session.</strong></div>
+        </div>
+      </div>
+      <div class="mistake-item">
+        <div class="mistake-icon">✕</div>
+        <div>
+          <div class="mistake-wrong">Not telling AI who your audience is</div>
+          <div class="mistake-fix">AI does not know your clients. A message for a Soweto salon owner reads completely differently to one for a Sandton corporate client. <strong>Fix: Always add "My audience is [describe them]" to your prompt.</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHEAT SHEET -->
+<div class="cheat-sheet">
+  <div class="section-label">Quick Reference</div>
+  <div class="section-title" style="margin-bottom:40px;">The Prompt<br>Cheat Sheet</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Task</th>
+          <th>Starter Phrase</th>
+          <th>Key Addition</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>TikTok caption</td>
+          <td><code>"You are a copywriter..."</code></td>
+          <td>Audience + platform + tone + word limit</td>
+        </tr>
+        <tr>
+          <td>WhatsApp follow up</td>
+          <td><code>"Write a warm message..."</code></td>
+          <td>Context + desired outcome + no pushy language</td>
+        </tr>
+        <tr>
+          <td>Business strategy</td>
+          <td><code>"Act as a SA business strategist..."</code></td>
+          <td>Step by step + ask clarifying questions first</td>
+        </tr>
+        <tr>
+          <td>Content plan</td>
+          <td><code>"Help me plan 30 days of content..."</code></td>
+          <td>Themes + platforms + posting frequency</td>
+        </tr>
+        <tr>
+          <td>Pricing and offers</td>
+          <td><code>"You are a pricing strategist..."</code></td>
+          <td>South African market + competitor context + income goal</td>
+        </tr>
+        <tr>
+          <td>Service description</td>
+          <td><code>"Write a service description..."</code></td>
+          <td>Benefits over features + target client + call to action</td>
+        </tr>
+        <tr>
+          <td>Booking system</td>
+          <td><code>"Create a step-by-step guide..."</code></td>
+          <td>Who uses it + their skill level + tool being used</td>
+        </tr>
+        <tr>
+          <td>Responding to clients</td>
+          <td><code>"Write a professional empathetic reply..."</code></td>
+          <td>Paste their message + your policy + desired tone</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- CONTEXT BLOCK -->
+<div class="context-section">
+  <div class="context-inner">
+    <div class="section-label">Bonus Tool</div>
+    <div class="section-title" style="margin-bottom:16px;">Your Master<br>Context Block</div>
+    <p style="color:var(--muted);font-size:15px;font-weight:300;line-height:1.8;margin-bottom:40px;max-width:580px;">Copy this. Fill it in. Paste it at the start of every new AI chat. This single habit will improve every output you get — immediately. AI cannot help you well if it does not know who you are.</p>
+    <div class="context-box">
+      <div class="context-title">Your Personal AI Context Block</div>
+      <div class="context-content">My name is [Your Name].
+
+I run [business name] — [one sentence about what you do].
+
+My ideal client is [describe them — age, location, what they struggle with, what they want].
+
+My brand tone is [e.g. warm and direct, professional but real, no corporate jargon].
+
+My main platforms are [e.g. TikTok, WhatsApp, Facebook].
+
+My goal right now is [e.g. get 3 new clients, grow my TikTok, launch my ebook].
+
+Keep all outputs relevant to South Africa unless I say otherwise.
+Do not use American references or examples.
+Reference WhatsApp not email. Reference rands not dollars.
+Always give me practical outputs I can use today — not theory.</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER CTA -->
+<div class="footer-cta">
+  <h2>Stop Experimenting.<br><span style="color:var(--lime)">Start Building.</span></h2>
+  <p>You now have the framework. The only thing left is to use it — every single day.</p>
+  <a href="https://www.paypal.com/ncp/payment/TDSW2WP9AVUZJ" class="cta-btn" target="_blank">Join The Community — R450/month</a>
+  <a href="https://www.paypal.com/ncp/payment/3KR5G4XB8WGGC" class="cta-btn-secondary" target="_blank">Book One on One — R600</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">Build With <span>AI</span></div>
+  <div class="footer-copy">By Nomhle Mbele · @Nomhle_AI · © 2026 All Rights Reserved</div>
+</footer>
+
+</body>
+</html>
